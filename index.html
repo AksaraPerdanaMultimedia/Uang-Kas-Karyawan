@@ -45,7 +45,7 @@ tbody tr{transition:background .2s}tbody tr:hover{background:rgba(255,255,255,.0
 .cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
 .cat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
 .cat .t{font-weight:700;margin-top:4px;color:var(--out)}
-.dots{display:flex;gap:5px}.dots span{width:14px;height:14px;border-radius:4px;background:#0b1730;border:1px solid var(--line)}.dots .ok{background:var(--in);border-color:var(--in)}
+.dots{display:flex;gap:5px}.dots span{width:22px;height:22px;border-radius:6px;background:#0b1730;border:1px solid var(--line);display:grid;place-items:center;font-size:14px;font-weight:800;color:#06251b;line-height:1}.dots .ok{background:var(--in);border-color:var(--in)}
 .empty,.err{padding:26px;text-align:center;color:var(--mut)}
 .err{color:var(--out)}
 .sk{height:120px;border-radius:24px;background:linear-gradient(90deg,var(--card),#20396a,var(--card));background-size:200% 100%;animation:sk 1.2s infinite}
@@ -90,7 +90,7 @@ function render(d){
   const rows = d.transaksi.length
     ? d.transaksi.map((t,i) => `<tr><td>${i+1}</td><td>${esc(t.tanggal)}</td><td><span class="tag">${esc(t.kategori||'-')}</span></td><td>${esc(t.keterangan)}</td><td class="r">${rp(t.jumlah)}</td></tr>`).join('')
     : '';
-  const iuran = d.karyawan.map(k => `<tr><td>${esc(k.nama)}</td><td><div class="dots">${k.bayar.map((b,i)=>`<span class="${b>0?'ok':''}" title="${esc(d.bulan[i])}"></span>`).join('')}</div></td><td class="r">${rp(k.total)}</td></tr>`).join('');
+  const iuran = d.karyawan.map(k => `<tr><td>${esc(k.nama)}</td><td><div class="dots">${k.bayar.map((b,i)=>`<span class="${b?'ok':''}" title="${esc(d.bulan[i])}${b?' - sudah bayar':' - belum bayar'}">${b?'&#10003;':''}</span>`).join('')}</div></td><td class="r">${rp(k.total)}</td></tr>`).join('');
 
   document.getElementById('app').innerHTML = `
   <section class="hero">
@@ -115,21 +115,28 @@ function render(d){
   countUp(document.getElementById('keluar'), keluar);
   requestAnimationFrame(() => requestAnimationFrame(() =>
     document.querySelectorAll('.bar i').forEach(i => i.style.width = i.dataset.w + '%')));
-  document.getElementById('upd').textContent = 'Data diperbarui ' + d.diperbarui + '. Halaman memuat ulang otomatis tiap 5 menit.';
+  document.getElementById('upd').textContent = 'Data diperbarui ' + d.diperbarui + '. Halaman memuat ulang otomatis tiap 2 menit.';
 }
 
+const btn = document.getElementById('reload');
 async function load(){
+  btn.textContent = 'Memuat...'; btn.disabled = true;
   try{
     const r = await fetch(API_URL);
     if(!r.ok) throw new Error('HTTP ' + r.status);
-    render(await r.json());
+    const d = await r.json();
+    try{ localStorage.setItem('kas', JSON.stringify(d)); }catch(_){}
+    render(d);
   }catch(e){
-    document.getElementById('app').innerHTML = '<div class="box err">Data belum bisa dimuat. Periksa URL Apps Script di index.html, lalu klik Muat ulang.</div>';
+    if (document.querySelector('.hero')) { document.getElementById('upd').textContent = 'Gagal memperbarui, menampilkan data terakhir.'; }
+    else document.getElementById('app').innerHTML = '<div class="box err">Data belum bisa dimuat. Periksa URL Apps Script di index.html, lalu klik Muat ulang.</div>';
   }
+  btn.textContent = 'Muat ulang'; btn.disabled = false;
 }
-document.getElementById('reload').onclick = () => { document.getElementById('app').innerHTML = '<div class="sk"></div>'; load(); };
+btn.onclick = load;
+try{ const c = localStorage.getItem('kas'); if(c) render(JSON.parse(c)); }catch(_){}
 load();
-setInterval(load, 300000);
+setInterval(load, 120000);
 </script>
 </body>
 </html>

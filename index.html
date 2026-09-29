@@ -99,7 +99,7 @@ footer{color:var(--mut);font-size:11px;text-align:center;margin-top:8px}
 </div>
 <script>
 // GANTI dengan URL Aplikasi Web dari Apps Script (berakhiran /exec)
-const API_URL = 'script.google.com/macros/s/AKfycbyjrniCUQJWnZBP751WBQ4X6iPw91hSbjwyTlYjuWoDn86f_AvM5j8Ei1BSQcd7fNk/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyjrniCUQJWnZBP751WBQ4X6iPw91hSbjwyTlYjuWoDn86f_AvM5j8Ei1BSQcd7fNk/exec';
 
 const rp = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -156,21 +156,25 @@ function render(d){
 }
 
 const btn = $('reload');
-async function load(){
+async function load(fresh){
   btn.classList.add('spin'); btn.disabled = true;
+  $('upd').textContent = 'Memuat data terbaru...';
   try{
-    const r = await fetch(API_URL);
+    if (/GANTI_DENGAN/.test(API_URL)) throw new Error('URL Apps Script belum diisi di index.html');
+    const r = await fetch(API_URL + (fresh === true ? (API_URL.includes('?') ? '&' : '?') + 'fresh=1&t=' + Date.now() : ''));
     if(!r.ok) throw new Error('HTTP ' + r.status);
     const d = await r.json();
+    if (d.error) throw new Error(d.error);
     try{ localStorage.setItem('kas', JSON.stringify(d)); }catch(_){}
     render(d);
   }catch(e){
-    if (document.querySelector('.hero')) $('upd').textContent = 'Gagal memperbarui, menampilkan data terakhir.';
-    else $('app').innerHTML = '<div class="err">Data belum bisa dimuat. Periksa URL Apps Script di index.html, lalu klik tombol muat ulang.</div>';
+    const pesan = esc(e.message || e);
+    if (document.querySelector('.hero')) $('upd').innerHTML = 'Gagal memperbarui, menampilkan data terakhir.<br>Penyebab: ' + pesan;
+    else $('app').innerHTML = '<div class="err">Data belum bisa dimuat.<br>Penyebab: ' + pesan + '</div>';
   }
   btn.classList.remove('spin'); btn.disabled = false;
 }
-btn.onclick = load;
+btn.onclick = () => load(true);
 $('tema').onclick = () => {
   const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
   document.documentElement.dataset.theme = t;
@@ -179,7 +183,7 @@ $('tema').onclick = () => {
 };
 try{ const c = localStorage.getItem('kas'); if(c) render(JSON.parse(c)); }catch(_){}
 load();
-setInterval(load, 120000);
+setInterval(() => load(), 120000);
 </script>
 </body>
 </html>

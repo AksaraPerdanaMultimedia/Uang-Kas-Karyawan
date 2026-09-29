@@ -3,124 +3,161 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1220">
 <title>Dashboard Uang Kas Karyawan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<script>try{var t=localStorage.getItem('tema')||(matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme='dark'}</script>
 <style>
-:root{--bg:#0e1a2f;--bg2:#15294a;--card:#172c4e;--line:#28416b;--tx:#eaf1ff;--mut:#93a7c9;--in:#34d399;--out:#fb7185;--sal:#fbbf24}
+:root{--bg:#0b1220;--card:rgba(255,255,255,.06);--bd:rgba(255,255,255,.1);--tx:#e8eefc;--mut:#8fa2c4;--in:#2dd4bf;--out:#fb7185;--gold:#fbbf24;--track:rgba(255,255,255,.1);--sh:0 10px 30px rgba(0,0,0,.35);--b1:#2563eb;--b2:#14b8a6}
+[data-theme=light]{--bg:#f1f5fb;--card:#fff;--bd:#e2e8f3;--tx:#12203d;--mut:#64748b;--in:#0d9488;--out:#e11d48;--gold:#d97706;--track:#e6ebf5;--sh:0 8px 24px rgba(30,60,120,.1);--b1:#3b82f6;--b2:#06b6d4}
 *{box-sizing:border-box;margin:0}
-body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:radial-gradient(1200px 600px at 80% -10%,#1f3d70 0,transparent 60%),var(--bg);color:var(--tx);min-height:100vh;padding:24px 16px 60px}
-.wrap{max-width:1040px;margin:auto}
-header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:22px}
-h1{font-size:clamp(24px,4.5vw,36px);font-weight:800;letter-spacing:-.02em}
-.sub{color:var(--mut);font-size:14px;margin-top:4px}
-button{font:inherit;background:var(--bg2);color:var(--tx);border:1px solid var(--line);border-radius:999px;padding:8px 16px;cursor:pointer;transition:.2s}
-button:hover{border-color:var(--in);transform:translateY(-1px)}
-button:focus-visible{outline:2px solid var(--sal);outline-offset:2px}
-.hero{background:linear-gradient(135deg,#1c3a6b,#152848);border:1px solid var(--line);border-radius:24px;padding:28px;position:relative;overflow:hidden}
-.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 40%,rgba(251,191,36,.12) 50%,transparent 60%);transform:translateX(-100%);animation:shine 2.4s .6s 1 forwards}
-@keyframes shine{to{transform:translateX(100%)}}
-.lbl{color:var(--mut);font-size:14px;font-weight:500}
-.big{font-size:clamp(38px,9vw,68px);font-weight:800;color:var(--sal);letter-spacing:-.03em;line-height:1.1;margin:6px 0 18px;font-variant-numeric:tabular-nums}
-.bar{height:14px;background:#0b1730;border-radius:99px;overflow:hidden;display:flex}
-.bar i{display:block;height:100%;width:0;transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
-.bar .a{background:linear-gradient(90deg,var(--sal),#f59e0b)}.bar .b{background:linear-gradient(90deg,var(--out),#f43f5e)}
-.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin-top:10px}
-.legend b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:16px 0 30px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;transition:.25s}
-.card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(0,0,0,.35)}
-.card .n{font-size:clamp(24px,4vw,32px);font-weight:800;margin-top:6px;font-variant-numeric:tabular-nums}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:14px;background:var(--bg);color:var(--tx);min-height:100vh;padding:16px 14px 48px;transition:background .3s,color .3s;position:relative;overflow-x:hidden}
+.blob{position:fixed;width:380px;height:380px;border-radius:50%;filter:blur(90px);opacity:.28;z-index:0;pointer-events:none;animation:float 14s ease-in-out infinite alternate}
+.b1{background:var(--b1);top:-120px;right:-100px}.b2{background:var(--b2);bottom:-140px;left:-120px;animation-delay:-6s}
+@keyframes float{to{transform:translate(-40px,50px) scale(1.15)}}
+.wrap{max-width:980px;margin:auto;position:relative;z-index:1}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}
+h1{font-size:clamp(18px,4.6vw,28px);font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.sub{color:var(--mut);font-size:12px;margin-top:3px}
+.acts{display:flex;gap:8px;flex-shrink:0}
+.ib{width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--bd);color:var(--tx);cursor:pointer;display:grid;place-items:center;transition:.2s;box-shadow:var(--sh)}
+.ib:hover{transform:translateY(-2px)}.ib:focus-visible{outline:2px solid var(--in);outline-offset:2px}
+.ib svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ib.spin svg{animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.sun{display:none}[data-theme=light] .sun{display:block}[data-theme=light] .moon{display:none}
+.hero{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;border-radius:22px;padding:22px;color:#fff;background:linear-gradient(135deg,#1e40af,#0f766e);box-shadow:0 16px 40px rgba(20,90,160,.35);position:relative;overflow:hidden}
+.hero:before,.hero:after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.09)}
+.hero:before{width:220px;height:220px;right:-60px;top:-90px}.hero:after{width:150px;height:150px;left:30%;bottom:-90px}
+.hero>*{position:relative;z-index:1}
+.hl{font-size:12px;opacity:.8;font-weight:500}
+.big{font-size:clamp(26px,8vw,46px);font-weight:800;letter-spacing:-.03em;margin:4px 0 8px;font-variant-numeric:tabular-nums;line-height:1.1}
+.chip{display:inline-block;background:rgba(255,255,255,.18);border-radius:99px;padding:4px 10px;font-size:11px;font-weight:600}
+.ring{width:104px;height:104px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:11;stroke-linecap:round}
+.ring .t{stroke:rgba(255,255,255,.2)}.ring .v{stroke:#fff;stroke-dasharray:314;stroke-dashoffset:314;transition:stroke-dashoffset 1.6s cubic-bezier(.2,.8,.2,1)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-size:18px;font-weight:800;line-height:1}
+.ring small{display:block;font-size:9px;font-weight:500;opacity:.8;margin-top:2px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 22px}
+.stat{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:14px;box-shadow:var(--sh);transition:.25s;display:flex;gap:12px;align-items:center;backdrop-filter:blur(8px)}
+.stat:hover{transform:translateY(-3px)}
+.ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
+.ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.in .ico{background:color-mix(in srgb,var(--in) 18%,transparent);color:var(--in)}.out .ico{background:color-mix(in srgb,var(--out) 18%,transparent);color:var(--out)}
+.stat .l{font-size:11px;color:var(--mut)}
+.stat .n{font-size:clamp(14px,4.2vw,22px);font-weight:800;font-variant-numeric:tabular-nums;margin-top:1px;word-break:break-word}
 .in .n{color:var(--in)}.out .n{color:var(--out)}
-h2{font-size:20px;font-weight:700;margin:6px 0 12px}
-.box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px 8px;margin-bottom:30px}
-.scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
-th{color:var(--mut);font-weight:500;text-align:left;padding:12px;border-bottom:1px solid var(--line)}
-td{padding:12px;border-bottom:1px solid rgba(40,65,107,.5)}
-tr:last-child td{border:0}
-tbody tr{transition:background .2s}tbody tr:hover{background:rgba(255,255,255,.04)}
-.r{text-align:right;font-variant-numeric:tabular-nums}
-.tag{background:#22406f;border-radius:99px;padding:3px 10px;font-size:12px}
-.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
-.cat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
-.cat .t{font-weight:700;margin-top:4px;color:var(--out)}
-.dots{display:flex;gap:5px}.dots span{width:22px;height:22px;border-radius:6px;background:#0b1730;border:1px solid var(--line);display:grid;place-items:center;font-size:14px;font-weight:800;color:#06251b;line-height:1}.dots .ok{background:var(--in);border-color:var(--in)}
-.empty,.err{padding:26px;text-align:center;color:var(--mut)}
-.err{color:var(--out)}
-.sk{height:120px;border-radius:24px;background:linear-gradient(90deg,var(--card),#20396a,var(--card));background-size:200% 100%;animation:sk 1.2s infinite}
-@keyframes sk{to{background-position:-200% 0}}
-footer{color:var(--mut);font-size:12px;text-align:center}
-@media (prefers-reduced-motion:reduce){*,*:after{animation:none!important;transition:none!important}}
+h2{font-size:16px;font-weight:800;margin:0 2px 10px;display:flex;align-items:center;gap:8px}
+h2:before{content:"";width:4px;height:16px;border-radius:4px;background:linear-gradient(var(--b1),var(--b2))}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.cat{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:12px 14px;box-shadow:var(--sh)}
+.cat .l{font-size:11px;color:var(--mut)}.cat .v{font-size:15px;font-weight:800;margin:2px 0 8px;font-variant-numeric:tabular-nums}
+.cat .bar{height:6px;border-radius:9px;background:var(--track);overflow:hidden}
+.cat .bar i{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,var(--out),var(--gold));transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.list{display:grid;gap:8px;margin-bottom:22px}
+.tx{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:12px 14px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;transition:.2s}
+.tx:hover{transform:translateX(3px)}
+.tx .k{font-weight:600;font-size:13px}.tx .m{font-size:11px;color:var(--mut)}
+.tx .j{font-weight:800;color:var(--out);font-size:14px;font-variant-numeric:tabular-nums;grid-row:1/3;grid-column:2}
+.tag{display:inline-block;background:color-mix(in srgb,var(--b1) 16%,transparent);color:var(--b1);border-radius:99px;padding:1px 8px;font-size:10px;font-weight:600;margin-right:6px}
+[data-theme=dark] .tag{color:#93c5fd}
+.emp{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:12px 14px;margin-bottom:8px}
+.eh{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:8px}
+.eh b{font-size:13px;font-weight:700}.eh span{font-size:11px;color:var(--mut);white-space:nowrap}
+.dots{display:flex;flex-wrap:wrap;gap:4px}
+.dots span{width:24px;height:24px;border-radius:7px;background:var(--track);display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff;transition:transform .2s}
+.dots span:hover{transform:scale(1.2)}
+.dots .ok{background:linear-gradient(135deg,var(--in),#22c55e);box-shadow:0 2px 8px color-mix(in srgb,var(--in) 40%,transparent);animation:pop .4s backwards}
+@keyframes pop{from{transform:scale(0)}}
+.note{font-size:11px;color:var(--mut);margin:-2px 2px 12px}
+.empty,.err{padding:20px;text-align:center;color:var(--mut);background:var(--card);border:1px dashed var(--bd);border-radius:16px;margin-bottom:22px}.err{color:var(--out)}
+.sk{height:140px;border-radius:22px;background:linear-gradient(90deg,var(--card),var(--track),var(--card));background-size:200% 100%;animation:sk 1.2s infinite}@keyframes sk{to{background-position:-200% 0}}
+footer{color:var(--mut);font-size:11px;text-align:center;margin-top:8px}
+@media(max-width:480px){.hero{grid-template-columns:1fr;padding:18px}.ring{width:84px;height:84px;position:absolute;right:16px;top:16px}.ring b{font-size:15px}.hero>div:first-child{padding-right:80px}.stat{flex-direction:column;align-items:flex-start;gap:8px}.dots span{width:21px;height:21px;font-size:12px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
+<div class="blob b1"></div><div class="blob b2"></div>
 <div class="wrap">
   <header>
-    <div><h1>Dashboard Uang Kas Karyawan</h1><p class="sub" id="periode">Transparansi kas untuk seluruh karyawan</p></div>
-    <button id="reload" type="button">Muat ulang</button>
+    <div><h1>Uang Kas Karyawan</h1><p class="sub">Laporan kas terbuka untuk seluruh karyawan</p></div>
+    <div class="acts">
+      <button class="ib" id="tema" type="button" aria-label="Ganti mode tampilan" title="Mode malam / siang">
+        <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <button class="ib" id="reload" type="button" aria-label="Muat ulang data" title="Muat ulang">
+        <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+      </button>
+    </div>
   </header>
   <div id="app"><div class="sk"></div></div>
   <footer id="upd"></footer>
 </div>
 <script>
 // GANTI dengan URL Aplikasi Web dari Apps Script (berakhiran /exec)
-const API_URL = 'https://script.google.com/macros/s/AKfycbyjrniCUQJWnZBP751WBQ4X6iPw91hSbjwyTlYjuWoDn86f_AvM5j8Ei1BSQcd7fNk/exec';
+const API_URL = 'script.google.com/macros/s/AKfycbyjrniCUQJWnZBP751WBQ4X6iPw91hSbjwyTlYjuWoDn86f_AvM5j8Ei1BSQcd7fNk/exec';
 
 const rp = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const $ = id => document.getElementById(id);
 
 function countUp(el, to){
   if (reduce || !to) { el.textContent = rp(to); return; }
-  const t0 = performance.now(), dur = 1400;
+  const t0 = performance.now();
   (function f(t){
-    const p = Math.min((t - t0) / dur, 1), e = 1 - Math.pow(1 - p, 3);
-    el.textContent = rp(to * e);
+    const p = Math.min((t - t0) / 1400, 1);
+    el.textContent = rp(to * (1 - Math.pow(1 - p, 3)));
     if (p < 1) requestAnimationFrame(f);
   })(t0);
 }
 
 function render(d){
   const {saldo, masuk, keluar} = d.ringkasan;
-  const pk = masuk > 0 ? Math.min(keluar / masuk * 100, 100) : 0;
-  const ps = masuk > 0 ? 100 - pk : 0;
+  const sisaPct = masuk > 0 ? Math.max(0, Math.min(saldo / masuk * 100, 100)) : 0;
+  const maxK = Math.max(...d.kategori.map(k => k.total), 1);
 
-  const cats = d.kategori.map(k => `<div class="cat"><div class="lbl">${esc(k.nama)}</div><div class="t">${rp(k.total)}</div></div>`).join('');
-  const rows = d.transaksi.length
-    ? d.transaksi.map((t,i) => `<tr><td>${i+1}</td><td>${esc(t.tanggal)}</td><td><span class="tag">${esc(t.kategori||'-')}</span></td><td>${esc(t.keterangan)}</td><td class="r">${rp(t.jumlah)}</td></tr>`).join('')
-    : '';
-  const iuran = d.karyawan.map(k => `<tr><td>${esc(k.nama)}</td><td><div class="dots">${k.bayar.map((b,i)=>`<span class="${b?'ok':''}" title="${esc(d.bulan[i])}${b?' - sudah bayar':' - belum bayar'}">${b?'&#10003;':''}</span>`).join('')}</div></td><td class="r">${rp(k.total)}</td></tr>`).join('');
+  const cats = d.kategori.map(k => `<div class="cat"><div class="l">${esc(k.nama)}</div><div class="v">${rp(k.total)}</div><div class="bar"><i data-w="${k.total / maxK * 100}"></i></div></div>`).join('');
+  const tx = d.transaksi.length
+    ? '<div class="list">' + d.transaksi.map(t => `<div class="tx"><div class="k">${esc(t.keterangan || '-')}</div><div class="j">- ${rp(t.jumlah)}</div><div class="m"><span class="tag">${esc(t.kategori || 'Lainnya')}</span>${esc(t.tanggal)}</div></div>`).join('') + '</div>'
+    : '<div class="empty">Belum ada pengeluaran kas.</div>';
+  const emp = d.karyawan.map(k => {
+    const n = k.bayar.filter(Boolean).length;
+    return `<div class="emp"><div class="eh"><b>${esc(k.nama)}</b><span>${n}/${d.bulan.length} bulan &middot; ${rp(k.total)}</span></div><div class="dots">${k.bayar.map((b,i) => `<span class="${b ? 'ok' : ''}" style="animation-delay:${i*40}ms" title="${esc(d.bulan[i])}${b ? ' - sudah bayar' : ' - belum bayar'}">${b ? '&#10003;' : ''}</span>`).join('')}</div></div>`;
+  }).join('');
 
-  document.getElementById('app').innerHTML = `
+  $('app').innerHTML = `
   <section class="hero">
-    <div class="lbl">Sisa saldo kas</div>
-    <div class="big" id="saldo">Rp 0</div>
-    <div class="bar" role="img" aria-label="Perbandingan sisa saldo dan pengeluaran"><i class="a" data-w="${ps}"></i><i class="b" data-w="${pk}"></i></div>
-    <div class="legend"><span><b style="background:var(--sal)"></b>Tersisa ${ps.toFixed(0)}%</span><span><b style="background:var(--out)"></b>Terpakai ${pk.toFixed(0)}%</span></div>
+    <div><div class="hl">Sisa saldo kas</div><div class="big" id="saldo">Rp 0</div><span class="chip">Dari total kas masuk ${rp(masuk)}</span></div>
+    <div class="ring" role="img" aria-label="Sisa saldo ${sisaPct.toFixed(0)} persen"><svg viewBox="0 0 120 120"><circle class="t" cx="60" cy="60" r="50"/><circle class="v" cx="60" cy="60" r="50" data-p="${sisaPct}"/></svg><b><span>${sisaPct.toFixed(0)}%<small>tersisa</small></span></b></div>
   </section>
-  <div class="grid">
-    <div class="card in"><div class="lbl">Total kas masuk</div><div class="n" id="masuk">Rp 0</div></div>
-    <div class="card out"><div class="lbl">Total kas keluar</div><div class="n" id="keluar">Rp 0</div></div>
+  <div class="g2">
+    <div class="stat in"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div><div><div class="l">Total kas masuk</div><div class="n" id="masuk">Rp 0</div></div></div>
+    <div class="stat out"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></div><div><div class="l">Total kas keluar</div><div class="n" id="keluar">Rp 0</div></div></div>
   </div>
   <h2>Detail pengeluaran</h2>
   <div class="cats">${cats}</div>
-  <div class="box scroll"><table><thead><tr><th>No</th><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="r">Jumlah</th></tr></thead><tbody>${rows}</tbody></table>
-  ${rows ? '' : '<div class="empty">Belum ada pengeluaran kas.</div>'}</div>
-  <h2>Status iuran per bulan</h2>
-  <div class="box scroll"><table><thead><tr><th>Nama</th><th>${esc(d.bulan[0])} sampai ${esc(d.bulan[d.bulan.length-1])}</th><th class="r">Total dibayar</th></tr></thead><tbody>${iuran}</tbody></table></div>`;
+  ${tx}
+  <h2>Status iuran</h2>
+  <p class="note">${esc(d.bulan[0])} sampai ${esc(d.bulan[d.bulan.length-1])}. Kotak hijau berarti sudah bayar.</p>
+  ${emp}`;
 
-  countUp(document.getElementById('saldo'), saldo);
-  countUp(document.getElementById('masuk'), masuk);
-  countUp(document.getElementById('keluar'), keluar);
-  requestAnimationFrame(() => requestAnimationFrame(() =>
-    document.querySelectorAll('.bar i').forEach(i => i.style.width = i.dataset.w + '%')));
-  document.getElementById('upd').textContent = 'Data diperbarui ' + d.diperbarui + '. Halaman memuat ulang otomatis tiap 2 menit.';
+  countUp($('saldo'), saldo); countUp($('masuk'), masuk); countUp($('keluar'), keluar);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll('.cat i').forEach(i => i.style.width = i.dataset.w + '%');
+    const v = document.querySelector('.ring .v');
+    if (v) v.style.strokeDashoffset = 314 - 314 * v.dataset.p / 100;
+  }));
+  $('upd').textContent = 'Data diperbarui ' + d.diperbarui + '. Otomatis diperbarui tiap 2 menit.';
 }
 
-const btn = document.getElementById('reload');
+const btn = $('reload');
 async function load(){
-  btn.textContent = 'Memuat...'; btn.disabled = true;
+  btn.classList.add('spin'); btn.disabled = true;
   try{
     const r = await fetch(API_URL);
     if(!r.ok) throw new Error('HTTP ' + r.status);
@@ -128,12 +165,18 @@ async function load(){
     try{ localStorage.setItem('kas', JSON.stringify(d)); }catch(_){}
     render(d);
   }catch(e){
-    if (document.querySelector('.hero')) { document.getElementById('upd').textContent = 'Gagal memperbarui, menampilkan data terakhir.'; }
-    else document.getElementById('app').innerHTML = '<div class="box err">Data belum bisa dimuat. Periksa URL Apps Script di index.html, lalu klik Muat ulang.</div>';
+    if (document.querySelector('.hero')) $('upd').textContent = 'Gagal memperbarui, menampilkan data terakhir.';
+    else $('app').innerHTML = '<div class="err">Data belum bisa dimuat. Periksa URL Apps Script di index.html, lalu klik tombol muat ulang.</div>';
   }
-  btn.textContent = 'Muat ulang'; btn.disabled = false;
+  btn.classList.remove('spin'); btn.disabled = false;
 }
 btn.onclick = load;
+$('tema').onclick = () => {
+  const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = t;
+  try{ localStorage.setItem('tema', t); }catch(_){}
+  document.querySelector('meta[name=theme-color]').content = t === 'dark' ? '#0b1220' : '#f1f5fb';
+};
 try{ const c = localStorage.getItem('kas'); if(c) render(JSON.parse(c)); }catch(_){}
 load();
 setInterval(load, 120000);

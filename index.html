@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Uang Kas Karyawan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e1a2f;--bg2:#15294a;--card:#172c4e;--line:#28416b;--tx:#eaf1ff;--mut:#93a7c9;--in:#34d399;--out:#fb7185;--sal:#fbbf24}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:radial-gradient(1200px 600px at 80% -10%,#1f3d70 0,transparent 60%),var(--bg);color:var(--tx);min-height:100vh;padding:24px 16px 60px}
+.wrap{max-width:1040px;margin:auto}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+h1{font-size:clamp(24px,4.5vw,36px);font-weight:800;letter-spacing:-.02em}
+.sub{color:var(--mut);font-size:14px;margin-top:4px}
+button{font:inherit;background:var(--bg2);color:var(--tx);border:1px solid var(--line);border-radius:999px;padding:8px 16px;cursor:pointer;transition:.2s}
+button:hover{border-color:var(--in);transform:translateY(-1px)}
+button:focus-visible{outline:2px solid var(--sal);outline-offset:2px}
+.hero{background:linear-gradient(135deg,#1c3a6b,#152848);border:1px solid var(--line);border-radius:24px;padding:28px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 40%,rgba(251,191,36,.12) 50%,transparent 60%);transform:translateX(-100%);animation:shine 2.4s .6s 1 forwards}
+@keyframes shine{to{transform:translateX(100%)}}
+.lbl{color:var(--mut);font-size:14px;font-weight:500}
+.big{font-size:clamp(38px,9vw,68px);font-weight:800;color:var(--sal);letter-spacing:-.03em;line-height:1.1;margin:6px 0 18px;font-variant-numeric:tabular-nums}
+.bar{height:14px;background:#0b1730;border-radius:99px;overflow:hidden;display:flex}
+.bar i{display:block;height:100%;width:0;transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+.bar .a{background:linear-gradient(90deg,var(--sal),#f59e0b)}.bar .b{background:linear-gradient(90deg,var(--out),#f43f5e)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin-top:10px}
+.legend b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:16px 0 30px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;transition:.25s}
+.card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.card .n{font-size:clamp(24px,4vw,32px);font-weight:800;margin-top:6px;font-variant-numeric:tabular-nums}
+.in .n{color:var(--in)}.out .n{color:var(--out)}
+h2{font-size:20px;font-weight:700;margin:6px 0 12px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px 8px;margin-bottom:30px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+th{color:var(--mut);font-weight:500;text-align:left;padding:12px;border-bottom:1px solid var(--line)}
+td{padding:12px;border-bottom:1px solid rgba(40,65,107,.5)}
+tr:last-child td{border:0}
+tbody tr{transition:background .2s}tbody tr:hover{background:rgba(255,255,255,.04)}
+.r{text-align:right;font-variant-numeric:tabular-nums}
+.tag{background:#22406f;border-radius:99px;padding:3px 10px;font-size:12px}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
+.cat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.cat .t{font-weight:700;margin-top:4px;color:var(--out)}
+.dots{display:flex;gap:5px}.dots span{width:14px;height:14px;border-radius:4px;background:#0b1730;border:1px solid var(--line)}.dots .ok{background:var(--in);border-color:var(--in)}
+.empty,.err{padding:26px;text-align:center;color:var(--mut)}
+.err{color:var(--out)}
+.sk{height:120px;border-radius:24px;background:linear-gradient(90deg,var(--card),#20396a,var(--card));background-size:200% 100%;animation:sk 1.2s infinite}
+@keyframes sk{to{background-position:-200% 0}}
+footer{color:var(--mut);font-size:12px;text-align:center}
+@media (prefers-reduced-motion:reduce){*,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div><h1>Dashboard Uang Kas Karyawan</h1><p class="sub" id="periode">Transparansi kas untuk seluruh karyawan</p></div>
+    <button id="reload" type="button">Muat ulang</button>
+  </header>
+  <div id="app"><div class="sk"></div></div>
+  <footer id="upd"></footer>
+</div>
+<script>
+// GANTI dengan URL Aplikasi Web dari Apps Script (berakhiran /exec)
+const API_URL = 'https://script.google.com/macros/s/AKfycbyjrniCUQJWnZBP751WBQ4X6iPw91hSbjwyTlYjuWoDn86f_AvM5j8Ei1BSQcd7fNk/exec';
+
+const rp = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+function countUp(el, to){
+  if (reduce || !to) { el.textContent = rp(to); return; }
+  const t0 = performance.now(), dur = 1400;
+  (function f(t){
+    const p = Math.min((t - t0) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = rp(to * e);
+    if (p < 1) requestAnimationFrame(f);
+  })(t0);
+}
+
+function render(d){
+  const {saldo, masuk, keluar} = d.ringkasan;
+  const pk = masuk > 0 ? Math.min(keluar / masuk * 100, 100) : 0;
+  const ps = masuk > 0 ? 100 - pk : 0;
+
+  const cats = d.kategori.map(k => `<div class="cat"><div class="lbl">${esc(k.nama)}</div><div class="t">${rp(k.total)}</div></div>`).join('');
+  const rows = d.transaksi.length
+    ? d.transaksi.map((t,i) => `<tr><td>${i+1}</td><td>${esc(t.tanggal)}</td><td><span class="tag">${esc(t.kategori||'-')}</span></td><td>${esc(t.keterangan)}</td><td class="r">${rp(t.jumlah)}</td></tr>`).join('')
+    : '';
+  const iuran = d.karyawan.map(k => `<tr><td>${esc(k.nama)}</td><td><div class="dots">${k.bayar.map((b,i)=>`<span class="${b>0?'ok':''}" title="${esc(d.bulan[i])}"></span>`).join('')}</div></td><td class="r">${rp(k.total)}</td></tr>`).join('');
+
+  document.getElementById('app').innerHTML = `
+  <section class="hero">
+    <div class="lbl">Sisa saldo kas</div>
+    <div class="big" id="saldo">Rp 0</div>
+    <div class="bar" role="img" aria-label="Perbandingan sisa saldo dan pengeluaran"><i class="a" data-w="${ps}"></i><i class="b" data-w="${pk}"></i></div>
+    <div class="legend"><span><b style="background:var(--sal)"></b>Tersisa ${ps.toFixed(0)}%</span><span><b style="background:var(--out)"></b>Terpakai ${pk.toFixed(0)}%</span></div>
+  </section>
+  <div class="grid">
+    <div class="card in"><div class="lbl">Total kas masuk</div><div class="n" id="masuk">Rp 0</div></div>
+    <div class="card out"><div class="lbl">Total kas keluar</div><div class="n" id="keluar">Rp 0</div></div>
+  </div>
+  <h2>Detail pengeluaran</h2>
+  <div class="cats">${cats}</div>
+  <div class="box scroll"><table><thead><tr><th>No</th><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="r">Jumlah</th></tr></thead><tbody>${rows}</tbody></table>
+  ${rows ? '' : '<div class="empty">Belum ada pengeluaran kas.</div>'}</div>
+  <h2>Status iuran per bulan</h2>
+  <div class="box scroll"><table><thead><tr><th>Nama</th><th>${esc(d.bulan[0])} sampai ${esc(d.bulan[d.bulan.length-1])}</th><th class="r">Total dibayar</th></tr></thead><tbody>${iuran}</tbody></table></div>`;
+
+  countUp(document.getElementById('saldo'), saldo);
+  countUp(document.getElementById('masuk'), masuk);
+  countUp(document.getElementById('keluar'), keluar);
+  requestAnimationFrame(() => requestAnimationFrame(() =>
+    document.querySelectorAll('.bar i').forEach(i => i.style.width = i.dataset.w + '%')));
+  document.getElementById('upd').textContent = 'Data diperbarui ' + d.diperbarui + '. Halaman memuat ulang otomatis tiap 5 menit.';
+}
+
+async function load(){
+  try{
+    const r = await fetch(API_URL);
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    render(await r.json());
+  }catch(e){
+    document.getElementById('app').innerHTML = '<div class="box err">Data belum bisa dimuat. Periksa URL Apps Script di index.html, lalu klik Muat ulang.</div>';
+  }
+}
+document.getElementById('reload').onclick = () => { document.getElementById('app').innerHTML = '<div class="sk"></div>'; load(); };
+load();
+setInterval(load, 300000);
+</script>
+</body>
+</html>

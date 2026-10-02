@@ -75,6 +75,20 @@ h2:before{content:"";width:4px;height:16px;border-radius:4px;background:linear-g
 .empty,.err{padding:20px;text-align:center;color:var(--mut);background:var(--card);border:1px dashed var(--bd);border-radius:16px;margin-bottom:22px}.err{color:var(--out)}
 .sk{height:140px;border-radius:22px;background:linear-gradient(90deg,var(--card),var(--track),var(--card));background-size:200% 100%;animation:sk 1.2s infinite}@keyframes sk{to{background-position:-200% 0}}
 footer{color:var(--mut);font-size:11px;text-align:center;margin-top:8px}
+.warn{border-radius:18px;padding:14px;margin:0 0 22px;border:1px solid color-mix(in srgb,var(--out) 45%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--out) 16%,var(--card)),var(--card));box-shadow:var(--sh)}
+.warn.good{border-color:color-mix(in srgb,var(--in) 45%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--in) 14%,var(--card)),var(--card))}
+.wh{display:flex;gap:10px;align-items:center}
+.wi{width:38px;height:38px;border-radius:50%;background:var(--out);color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px;flex-shrink:0;animation:pulse 1.8s infinite}
+.good .wi{background:var(--in);animation:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--out) 55%,transparent)}70%,100%{box-shadow:0 0 0 12px transparent}}
+.wt{font-weight:800;font-size:14px}.ws{font-size:11px;color:var(--mut)}
+.wtot{margin-left:auto;text-align:right;font-weight:800;color:var(--out);font-size:clamp(15px,4.6vw,20px);white-space:nowrap}
+.wtot small{display:block;font-size:10px;font-weight:500;color:var(--mut)}
+.wl{display:grid;gap:6px;margin-top:12px}
+.wr{display:flex;justify-content:space-between;gap:8px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:9px 12px}
+.wr b{font-size:13px}.wr small{display:block;font-size:10px;color:var(--mut);margin-top:1px}
+.wr span{font-weight:800;color:var(--out);font-size:13px;white-space:nowrap}
+.dots .no{background:color-mix(in srgb,var(--out) 18%,transparent);color:var(--out);border:1px solid var(--out)}
 @media(max-width:480px){.hero{grid-template-columns:1fr;padding:18px}.ring{width:84px;height:84px;position:absolute;right:16px;top:16px}.ring b{font-size:15px}.hero>div:first-child{padding-right:80px}.stat{flex-direction:column;align-items:flex-start;gap:8px}.dots span{width:21px;height:21px;font-size:12px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
@@ -99,7 +113,7 @@ footer{color:var(--mut);font-size:11px;text-align:center;margin-top:8px}
 </div>
 <script>
 // GANTI dengan URL Aplikasi Web dari Apps Script (berakhiran /exec)
-const API_URL = 'https://script.google.com/macros/s/AKfycbyjrniCUQJWnZBP751WBQ4X6iPw91hSbjwyTlYjuWoDn86f_AvM5j8Ei1BSQcd7fNk/exec';
+const API_URL = 'GANTI_DENGAN_URL_APPS_SCRIPT';
 
 const rp = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -127,9 +141,15 @@ function render(d){
     : '<div class="empty">Belum ada pengeluaran kas.</div>';
   const emp = d.karyawan.map(k => {
     const n = k.bayar.filter(Boolean).length;
-    return `<div class="emp"><div class="eh"><b>${esc(k.nama)}</b><span>${n}/${d.bulan.length} bulan &middot; ${rp(k.total)}</span></div><div class="dots">${k.bayar.map((b,i) => `<span class="${b ? 'ok' : ''}" style="animation-delay:${i*40}ms" title="${esc(d.bulan[i])}${b ? ' - sudah bayar' : ' - belum bayar'}">${b ? '&#10003;' : ''}</span>`).join('')}</div></div>`;
+    return `<div class="emp"><div class="eh"><b>${esc(k.nama)}</b><span>${n}/${d.bulan.length} bulan &middot; ${rp(k.total)}</span></div><div class="dots">${k.bayar.map((b,i) => `<span class="${b ? 'ok' : (k.belum && k.belum[i] ? 'no' : '')}" style="animation-delay:${i*40}ms" title="${esc(d.bulan[i])}${b ? ' - sudah bayar' : (k.belum && k.belum[i] ? ' - belum lunas' : ' - belum ada data')}">${b ? '&#10003;' : (k.belum && k.belum[i] ? '!' : '')}</span>`).join('')}</div></div>`;
   }).join('');
 
+  let warn = '';
+  if (Array.isArray(d.menunggak)) {
+    warn = d.menunggak.length
+      ? `<section class="warn" role="alert"><div class="wh"><div class="wi">!</div><div><div class="wt">Peringatan: iuran belum dibayar</div><div class="ws">${d.menunggak.length} karyawan &middot; iuran ${rp(d.iuran)}/bulan</div></div><div class="wtot">${rp(d.totalTunggakan)}<small>total tunggakan</small></div></div><div class="wl">${d.menunggak.map(k => `<div class="wr"><div><b>${esc(k.nama)}</b><small>${k.bulan.length} bulan: ${k.bulan.map(esc).join(', ')}</small></div><span>${rp(k.jumlah)}</span></div>`).join('')}</div></section>`
+      : `<section class="warn good"><div class="wh"><div class="wi">&#10003;</div><div><div class="wt">Tidak ada tunggakan</div><div class="ws">Semua iuran yang tercatat sudah lunas</div></div></div></section>`;
+  }
   $('app').innerHTML = `
   <section class="hero">
     <div><div class="hl">Sisa saldo kas</div><div class="big" id="saldo">Rp 0</div><span class="chip">Dari total kas masuk ${rp(masuk)}</span></div>
@@ -139,11 +159,12 @@ function render(d){
     <div class="stat in"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div><div><div class="l">Total kas masuk</div><div class="n" id="masuk">Rp 0</div></div></div>
     <div class="stat out"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></div><div><div class="l">Total kas keluar</div><div class="n" id="keluar">Rp 0</div></div></div>
   </div>
+  ${warn}
   <h2>Detail pengeluaran</h2>
   <div class="cats">${cats}</div>
   ${tx}
   <h2>Status iuran</h2>
-  <p class="note">${esc(d.bulan[0])} sampai ${esc(d.bulan[d.bulan.length-1])}. Kotak hijau berarti sudah bayar.</p>
+  <p class="note">${esc(d.bulan[0])} sampai ${esc(d.bulan[d.bulan.length-1])}. Hijau (&#10003;) sudah bayar, merah (!) belum lunas, abu-abu belum ada data.</p>
   ${emp}`;
 
   countUp($('saldo'), saldo); countUp($('masuk'), masuk); countUp($('keluar'), keluar);

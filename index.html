@@ -89,6 +89,26 @@ footer{color:var(--mut);font-size:11px;text-align:center;margin-top:8px}
 .wr b{font-size:13px}.wr small{display:block;font-size:10px;color:var(--mut);margin-top:1px}
 .wr span{font-weight:800;color:var(--out);font-size:13px;white-space:nowrap}
 .dots .no{background:color-mix(in srgb,var(--out) 18%,transparent);color:var(--out);border:1px solid var(--out)}
+.remind{position:relative;overflow:hidden;border-radius:18px;padding:16px;margin:0 0 12px;color:#fff;background:linear-gradient(120deg,#f59e0b,#ef4444,#ec4899);background-size:200% 200%;animation:grad 5s ease infinite;box-shadow:0 12px 30px rgba(239,68,68,.35);display:flex;gap:12px;align-items:center}
+@keyframes grad{50%{background-position:100% 50%}}
+.remind:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.35) 50%,transparent 65%);transform:translateX(-100%);animation:sweep 2.8s infinite}
+@keyframes sweep{to{transform:translateX(100%)}}
+.remind>*{position:relative;z-index:1}
+.remind .em{font-size:34px;display:inline-block;animation:wig 1.6s ease-in-out infinite}
+@keyframes wig{0%,100%{transform:rotate(-10deg) scale(1)}50%{transform:rotate(10deg) scale(1.18)}}
+.remind b{display:block;font-size:clamp(15px,4.8vw,21px);font-weight:800;line-height:1.2}
+.remind small{font-size:11px;opacity:.92}
+.coin{position:absolute!important;bottom:-22px;font-size:16px;opacity:0;z-index:0!important;animation:rise 4s linear infinite}
+@keyframes rise{12%{opacity:.9}100%{transform:translateY(-110px) rotate(40deg);opacity:0}}
+.warn.good{position:relative;overflow:hidden}
+.warn.good .wt{font-size:15px}
+.warn.good .wi{animation:bnc 1.8s ease-in-out infinite}
+@keyframes bnc{50%{transform:scale(1.15)}}
+.cf{position:absolute;inset:0;pointer-events:none}
+.cf span{position:absolute;top:-14px;width:7px;height:12px;border-radius:2px;animation:fall 3.2s ease-in infinite}
+@keyframes fall{to{transform:translateY(130px) rotate(540deg);opacity:0}}
+.warn.good .wh{position:relative;z-index:1}
+@media(prefers-reduced-motion:reduce){.coin,.cf{display:none}}
 @media(max-width:480px){.hero{grid-template-columns:1fr;padding:18px}.ring{width:84px;height:84px;position:absolute;right:16px;top:16px}.ring b{font-size:15px}.hero>div:first-child{padding-right:80px}.stat{flex-direction:column;align-items:flex-start;gap:8px}.dots span{width:21px;height:21px;font-size:12px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
@@ -146,9 +166,17 @@ function render(d){
 
   let warn = '';
   if (Array.isArray(d.menunggak)) {
-    warn = d.menunggak.length
-      ? `<section class="warn" role="alert"><div class="wh"><div class="wi">!</div><div><div class="wt">Peringatan: iuran belum dibayar</div><div class="ws">${d.menunggak.length} karyawan &middot; iuran ${rp(d.iuran)}/bulan</div></div><div class="wtot">${rp(d.totalTunggakan)}<small>total tunggakan</small></div></div><div class="wl">${d.menunggak.map(k => `<div class="wr"><div><b>${esc(k.nama)}</b><small>${k.bulan.length} bulan: ${k.bulan.map(esc).join(', ')}</small></div><span>${rp(k.jumlah)}</span></div>`).join('')}</div></section>`
-      : `<section class="warn good"><div class="wh"><div class="wi">&#10003;</div><div><div class="wt">Tidak ada tunggakan</div><div class="ws">Semua iuran yang tercatat sudah lunas</div></div></div></section>`;
+    const hr = new Date(new Date().toLocaleString('en-US', {timeZone: 'Asia/Jakarta'})).getDate();
+    const jendela = hr >= 25 || hr <= 4; // pengingat gajian: tanggal 25 sampai tanggal 4
+    if (d.menunggak.length) {
+      const coins = Array.from({length: 7}, (_, i) => `<span class="coin" style="left:${6 + i * 14}%;animation-delay:${(i * .55).toFixed(2)}s">&#128176;</span>`).join('');
+      if (jendela) warn += `<section class="remind" role="status">${coins}<span class="em">&#128184;</span><div><b>Udah gajian ya? Ayo bayar kas !!</b><small>Pembayaran kas paling lambat tanggal 4</small></div></section>`;
+      warn += `<section class="warn" role="alert"><div class="wh"><div class="wi">!</div><div><div class="wt">Peringatan: iuran belum dibayar</div><div class="ws">${d.menunggak.length} karyawan &middot; iuran ${rp(d.iuran)}/bulan</div></div><div class="wtot">${rp(d.totalTunggakan)}<small>total tunggakan</small></div></div><div class="wl">${d.menunggak.map(k => `<div class="wr"><div><b>${esc(k.nama)}</b><small>${k.bulan.length} bulan: ${k.bulan.map(esc).join(', ')}</small></div><span>${rp(k.jumlah)}</span></div>`).join('')}</div></section>`;
+    } else {
+      const cols = ['#fbbf24', '#fb7185', '#2dd4bf', '#60a5fa', '#a78bfa'];
+      const cf = Array.from({length: 18}, (_, i) => `<span style="left:${(i * 37 + 5) % 100}%;background:${cols[i % 5]};animation-delay:${((i % 6) * .35).toFixed(2)}s"></span>`).join('');
+      warn = `<section class="warn good" role="status"><div class="cf">${cf}</div><div class="wh"><div class="wi">&#10003;</div><div><div class="wt">Terimakasih sudah membayar kas tepat waktu</div><div class="ws">Semua iuran sudah lunas. Kalian luar biasa!</div></div></div></section>`;
+    }
   }
   $('app').innerHTML = `
   <section class="hero">

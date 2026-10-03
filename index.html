@@ -89,26 +89,31 @@ footer{color:var(--mut);font-size:11px;text-align:center;margin-top:8px}
 .wr b{font-size:13px}.wr small{display:block;font-size:10px;color:var(--mut);margin-top:1px}
 .wr span{font-weight:800;color:var(--out);font-size:13px;white-space:nowrap}
 .dots .no{background:color-mix(in srgb,var(--out) 18%,transparent);color:var(--out);border:1px solid var(--out)}
-.remind{position:relative;overflow:hidden;border-radius:18px;padding:16px;margin:0 0 12px;color:#fff;background:linear-gradient(120deg,#f59e0b,#ef4444,#ec4899);background-size:200% 200%;animation:grad 5s ease infinite;box-shadow:0 12px 30px rgba(239,68,68,.35);display:flex;gap:12px;align-items:center}
-@keyframes grad{50%{background-position:100% 50%}}
-.remind:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.35) 50%,transparent 65%);transform:translateX(-100%);animation:sweep 2.8s infinite}
-@keyframes sweep{to{transform:translateX(100%)}}
+.remind{position:relative;overflow:hidden;border-radius:18px;padding:14px 16px;margin:0 0 12px;display:flex;gap:12px;align-items:center;color:var(--tx);background:linear-gradient(120deg,color-mix(in srgb,#f59e0b 20%,var(--card)),color-mix(in srgb,#ef4444 16%,var(--card)));border:1px solid color-mix(in srgb,#f97316 35%,transparent);box-shadow:var(--sh)}
+.remind:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,transparent,#f97316,transparent) no-repeat;background-size:40% 100%;animation:slide 3s linear infinite}
+@keyframes slide{from{background-position:-60% 0}to{background-position:160% 0}}
 .remind>*{position:relative;z-index:1}
-.remind .em{font-size:34px;display:inline-block;animation:wig 1.6s ease-in-out infinite}
-@keyframes wig{0%,100%{transform:rotate(-10deg) scale(1)}50%{transform:rotate(10deg) scale(1.18)}}
-.remind b{display:block;font-size:clamp(15px,4.8vw,21px);font-weight:800;line-height:1.2}
-.remind small{font-size:11px;opacity:.92}
-.coin{position:absolute!important;bottom:-22px;font-size:16px;opacity:0;z-index:0!important;animation:rise 4s linear infinite}
-@keyframes rise{12%{opacity:.9}100%{transform:translateY(-110px) rotate(40deg);opacity:0}}
-.warn.good{position:relative;overflow:hidden}
-.warn.good .wt{font-size:15px}
-.warn.good .wi{animation:bnc 1.8s ease-in-out infinite}
-@keyframes bnc{50%{transform:scale(1.15)}}
-.cf{position:absolute;inset:0;pointer-events:none}
-.cf span{position:absolute;top:-14px;width:7px;height:12px;border-radius:2px;animation:fall 3.2s ease-in infinite}
-@keyframes fall{to{transform:translateY(130px) rotate(540deg);opacity:0}}
+.emw{position:relative;width:42px;height:42px;display:grid;place-items:center;flex-shrink:0}
+.rp{position:absolute;inset:4px;border-radius:50%;border:2px solid #f97316;opacity:0;animation:ripple 3s ease-out infinite}
+.rp+.rp{animation-delay:.6s}
+@keyframes ripple{0%{transform:scale(.8);opacity:.5}70%,100%{transform:scale(1.7);opacity:0}}
+.remind .em{font-size:28px;display:inline-block;animation:thumb 3s ease-in-out infinite}
+.remind b{display:block;font-size:clamp(13px,3.9vw,17px);font-weight:800;line-height:1.25;text-wrap:balance}
+.remind small{display:block;font-size:11px;color:var(--mut);margin-top:2px}
+.bub{position:absolute!important;bottom:-16px;border-radius:50%;background:color-mix(in srgb,#f97316 22%,transparent);z-index:0!important;animation:float2 7s ease-in infinite}
+@keyframes float2{from{transform:translateY(0);opacity:.8}to{transform:translateY(-90px);opacity:0}}
+@keyframes thumb{0%,45%,100%{transform:rotate(0) scale(1)}8%{transform:rotate(-18deg) scale(1.25) translateY(-3px)}18%{transform:rotate(12deg) scale(1.15)}28%{transform:rotate(-8deg) scale(1.2)}38%{transform:rotate(0) scale(1)}}
+.warn.good{position:relative;overflow:hidden;animation:glow 3s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:var(--sh)}50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--in) 14%,transparent),var(--sh)}}
+.warn.good .wt{font-size:clamp(13px,3.9vw,16px);text-wrap:balance;line-height:1.25}
+.warn.good .ws{margin-top:2px}
+.warn.good .wi{background:none;width:auto;height:auto;border-radius:0;font-size:36px;line-height:1;animation:thumb 3s ease-in-out infinite;transform-origin:70% 80%;filter:drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff) drop-shadow(0 3px 4px rgba(0,0,0,.25))}
 .warn.good .wh{position:relative;z-index:1}
-@media(prefers-reduced-motion:reduce){.coin,.cf{display:none}}
+.sps{position:absolute;inset:0;pointer-events:none}
+.sps span{position:absolute;font-size:12px;color:var(--gold);opacity:0;animation:tw 3s ease-in-out infinite}
+.sps span:nth-child(even){color:var(--in);font-size:9px}
+@keyframes tw{0%,100%{opacity:0;transform:scale(.4) rotate(0)}50%{opacity:.6;transform:scale(1) rotate(90deg)}}
+@media(prefers-reduced-motion:reduce){.bub,.sps,.rp{display:none}}
 @media(max-width:480px){.hero{grid-template-columns:1fr;padding:18px}.ring{width:84px;height:84px;position:absolute;right:16px;top:16px}.ring b{font-size:15px}.hero>div:first-child{padding-right:80px}.stat{flex-direction:column;align-items:flex-start;gap:8px}.dots span{width:21px;height:21px;font-size:12px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
@@ -169,13 +174,12 @@ function render(d){
     const hr = new Date(new Date().toLocaleString('en-US', {timeZone: 'Asia/Jakarta'})).getDate();
     const jendela = hr >= 25 || hr <= 4; // pengingat gajian: tanggal 25 sampai tanggal 4
     if (d.menunggak.length) {
-      const coins = Array.from({length: 7}, (_, i) => `<span class="coin" style="left:${6 + i * 14}%;animation-delay:${(i * .55).toFixed(2)}s">&#128176;</span>`).join('');
-      if (jendela) warn += `<section class="remind" role="status">${coins}<span class="em">&#128184;</span><div><b>Udah gajian ya? Ayo bayar kas !!</b><small>Pembayaran kas paling lambat tanggal 4</small></div></section>`;
+      const bubs = Array.from({length: 6}, (_, i) => `<span class="bub" style="left:${8 + i * 17}%;width:${10 + (i % 3) * 6}px;height:${10 + (i % 3) * 6}px;animation-delay:${(i * 1.1).toFixed(1)}s"></span>`).join('');
+      if (jendela) warn += `<section class="remind" role="status">${bubs}<span class="emw"><i class="rp"></i><i class="rp"></i><span class="em">&#128184;</span></span><div><b>Udah gajian ya? Ayo bayar kas&nbsp;!!</b><small>Pembayaran kas paling lambat tanggal 4</small></div></section>`;
       warn += `<section class="warn" role="alert"><div class="wh"><div class="wi">!</div><div><div class="wt">Peringatan: iuran belum dibayar</div><div class="ws">${d.menunggak.length} karyawan &middot; iuran ${rp(d.iuran)}/bulan</div></div><div class="wtot">${rp(d.totalTunggakan)}<small>total tunggakan</small></div></div><div class="wl">${d.menunggak.map(k => `<div class="wr"><div><b>${esc(k.nama)}</b><small>${k.bulan.length} bulan: ${k.bulan.map(esc).join(', ')}</small></div><span>${rp(k.jumlah)}</span></div>`).join('')}</div></section>`;
     } else {
-      const cols = ['#fbbf24', '#fb7185', '#2dd4bf', '#60a5fa', '#a78bfa'];
-      const cf = Array.from({length: 18}, (_, i) => `<span style="left:${(i * 37 + 5) % 100}%;background:${cols[i % 5]};animation-delay:${((i % 6) * .35).toFixed(2)}s"></span>`).join('');
-      warn = `<section class="warn good" role="status"><div class="cf">${cf}</div><div class="wh"><div class="wi">&#10003;</div><div><div class="wt">Terimakasih sudah membayar kas tepat waktu</div><div class="ws">Semua iuran sudah lunas. Kalian luar biasa!</div></div></div></section>`;
+      const sp = Array.from({length: 10}, (_, i) => `<span style="left:${(i * 29 + 8) % 92}%;top:${(i * 41 + 10) % 78}%;animation-delay:${((i % 5) * .6).toFixed(1)}s">&#10022;</span>`).join('');
+      warn = `<section class="warn good" role="status"><div class="sps">${sp}</div><div class="wh"><div class="wi">&#128077;</div><div><div class="wt">Terimakasih sudah membayar kas tepat waktu</div><div class="ws">Semua iuran sudah lunas. Kalian luar biasa!</div></div></div></section>`;
     }
   }
   $('app').innerHTML = `
